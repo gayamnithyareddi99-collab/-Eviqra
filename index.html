@@ -1428,16 +1428,25 @@ footer{background:var(--bg-black);border-top:1px solid rgba(56,182,232,0.1);padd
     </div>
     <div class="footer-bottom">
       <p>© 2026 <span>Eviqra</span> · United Kingdom · UK GDPR Compliant · DEMS-Aligned Architecture · Tamper-Evident Evidence Platform</p>
-      <p><span>eviqra.co.uk</span> · Innovator Founder Visa Application · Strictly Confidential</p>
+      <p><span>eviqra.com</span> · Innovator Founder Visa Application · Strictly Confidential</p>
     </div>
   </div>
 </footer>
 
 
+<!-- ═══════════ BACK BUTTON ═══════════ -->
+<button id="back-btn-float" onclick="goBack()" style="display:none;position:fixed;bottom:28px;left:28px;z-index:1100;align-items:center;gap:8px;background:rgba(10,14,24,0.95);border:1.5px solid rgba(56,182,232,0.35);color:#38B6E8;padding:10px 18px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(16px);box-shadow:0 6px 24px rgba(0,0,0,0.4),0 0 0 1px rgba(56,182,232,0.08);transition:all 0.22s;">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  Back
+</button>
+
 <!-- ═══════════ JAVASCRIPT ═══════════ -->
 <script>
 /* ─── PAGE NAV ───────────────────────────────── */
-function showPage(name){
+window._pageHistory=[];
+window._currentPage='home';
+
+function showPage(name,fromBack){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
   const pg=document.getElementById('page-'+name);
@@ -1446,6 +1455,23 @@ function showPage(name){
   if(btn){btn.classList.add('active');}
   window.scrollTo({top:0,behavior:'instant'});
   if(name==='market'&&!window.marketChartsLoaded){initMarketCharts();window.marketChartsLoaded=true;}
+  if(!fromBack&&window._currentPage!==name){window._pageHistory.push(window._currentPage);}
+  window._currentPage=name;
+  updateBackBtn();
+}
+
+function goBack(){
+  if(window._pageHistory.length>0){
+    const prev=window._pageHistory.pop();
+    showPage(prev,true);
+  }
+}
+
+function updateBackBtn(){
+  const bb=document.getElementById('back-btn-float');
+  if(!bb)return;
+  if(window._pageHistory.length>0){bb.style.display='flex';}
+  else{bb.style.display='none';}
 }
 
 function toggleCard(btn){
@@ -1475,6 +1501,13 @@ document.getElementById('hamburger').addEventListener('click',function(){
   this.classList.toggle('open');
   document.getElementById('mobileNav').classList.toggle('open');
 });
+
+// Back button hover effect
+const _bb=document.getElementById('back-btn-float');
+if(_bb){
+  _bb.addEventListener('mouseenter',()=>{_bb.style.background='rgba(56,182,232,0.1)';_bb.style.borderColor='rgba(56,182,232,0.7)';_bb.style.transform='translateY(-2px)';});
+  _bb.addEventListener('mouseleave',()=>{_bb.style.background='rgba(10,14,24,0.95)';_bb.style.borderColor='rgba(56,182,232,0.35)';_bb.style.transform='translateY(0)';});
+}
 
 function handleSubmit(e){
   e.preventDefault();
